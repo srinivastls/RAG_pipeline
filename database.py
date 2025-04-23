@@ -32,7 +32,7 @@ def embed_text(chunks, tokenizer, model):
         return_tensors="pt",
         max_length=512
     )
-    model.to(inputs['input_ids'].device)
+    model.to("meta")
     # Move inputs to the same device as the model
     inputs = {k: v.to(model.device) for k, v in inputs.items()}
     # Get hidden states
