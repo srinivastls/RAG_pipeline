@@ -5,4 +5,3 @@ sentencepiece
 PYmuPDF
 requests
 pymilvus
-re
