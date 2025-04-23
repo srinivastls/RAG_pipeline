@@ -21,7 +21,7 @@ def make_chunks(text, chunk_size=400, overlap=50):
 
 def embed_text(chunks, tokenizer, model):
     # Add 'query: ' prefix if embedding for queries (optional for docs)
-    torch.to_device("meta")
+    
     chunks = ["query: " + text for text in chunks]
 
     # Tokenize input
@@ -32,7 +32,10 @@ def embed_text(chunks, tokenizer, model):
         return_tensors="pt",
         max_length=512
     )
-
+    model.to(inputs['input_ids'].device)
+    # Move inputs to the same device as the model
+    inputs = {k: v.to(model.device) for k, v in inputs.items()}
+    # Get hidden states
     with torch.no_grad():
         outputs = model(**inputs, output_hidden_states=True)
         hidden_states = outputs.hidden_states[-1]
