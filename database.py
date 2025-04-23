@@ -21,7 +21,7 @@ def make_chunks(text, chunk_size=400, overlap=50):
 
 def embed_text(chunks, tokenizer, model):
     # Add 'query: ' prefix if embedding for queries (optional for docs)
-    model.to_device("meta")
+    torch.to_device("meta")
     chunks = ["query: " + text for text in chunks]
 
     # Tokenize input
