@@ -4,6 +4,5 @@ datasets
 sentencepiece
 PYmuPDF
 requests
-json
 pymilvus
 re
