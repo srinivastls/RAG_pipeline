@@ -27,6 +27,8 @@ llm_model = AutoModelForCausalLM.from_pretrained(llm_model_name)
 
 llm_model.eval()
 
+llm_model.to("meta")  # or "cuda"
+
 #Streamlit Interface
 st.set_page_config(page_title="RAG Pipeline", layout="wide")
 st.title("RAG Pipeline: Upload & Search")
@@ -53,6 +55,8 @@ with tab1:
 # ---------- Tab 2: Search ----------
 with tab2:
     query = st.text_input("Enter your search query:")
+    for name, param in embedding_model.named_parameters():
+        st.write(f"{name} -> {param.device}")
 
     if st.button("Search") and query:
         try:
