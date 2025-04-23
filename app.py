@@ -55,8 +55,7 @@ with tab1:
 # ---------- Tab 2: Search ----------
 with tab2:
     query = st.text_input("Enter your search query:")
-    for name, param in embedding_model.named_parameters():
-        st.write(f"{name} -> {param.device}")
+    
 
     if st.button("Search") and query:
         try:
