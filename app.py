@@ -9,7 +9,9 @@ from output import generate_response
 embedding_model_name = "BAAI/bge-large-en"
 
 embedding_tokenizer = AutoTokenizer.from_pretrained(embedding_model_name)
-embedding_model = AutoModelForCausalLM.from_pretrained(embedding_model_name)
+from transformers import AutoModel
+
+embedding_model = AutoModel.from_pretrained(embedding_model_name)
 
 embedding_model.eval()
 
