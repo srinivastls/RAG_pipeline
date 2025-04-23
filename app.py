@@ -15,7 +15,7 @@ embedding_model = AutoModel.from_pretrained(embedding_model_name)
 
 embedding_model.eval()
 
-embedding_model.to("cpu")  # or "cuda"
+embedding_model.to("meta")  # or "cuda"
 
 llm_model_name = "microsoft/Phi-3-mini-128k-instruct"
 
