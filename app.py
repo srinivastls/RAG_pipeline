@@ -15,7 +15,7 @@ embedding_model = AutoModel.from_pretrained(embedding_model_name)
 
 embedding_model.eval()
 
-embedding_model.to("meta")  # or "cuda"
+embedding_model.to("cpu")  # or "cuda"
 
 llm_model_name = "microsoft/Phi-3-mini-128k-instruct"
 
@@ -27,7 +27,7 @@ llm_model = AutoModelForCausalLM.from_pretrained(llm_model_name)
 
 llm_model.eval()
 
-llm_model.to("meta")  # or "cuda"
+llm_model.to("cpu")  # or "cuda"
 
 #Streamlit Interface
 st.set_page_config(page_title="RAG Pipeline", layout="wide")
