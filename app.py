@@ -53,7 +53,7 @@ with tab2:
 
     if st.button("Search") and query:
         try:
-            results = search_database(query, embedding_tokenizer, embedding_model)
+            results = search_cloud_database(query, embedding_tokenizer, embedding_model)
             if results and len(results[0]) > 0:
                 for i, hit in enumerate(results[0]):
                     st.markdown(f"**Result {i+1}**")
