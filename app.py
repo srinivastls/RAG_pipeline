@@ -50,7 +50,7 @@ with tab2:
         try:
             results = search_cloud_database(query, embedding_tokenizer, embedding_model)
             
-            for i, hit in enumerate(results[0]):
+            for i, hit in enumerate(results['data']):
                 st.markdown(f"**Result {i+1}**")
                 st.write(hit.entity.get("text"))
                 st.write("File Name:", hit.entity.get("filename"))
