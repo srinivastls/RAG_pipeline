@@ -107,9 +107,9 @@ def upload_to_milvus(collection, uploaded_file, tokenizer, model):
 
 def upload_to_milvus_cloud(uploaded_file, tokenizer, model):
     
-    url = "url"
+    url = "https://in03-505c80f9dc0263a.serverless.gcp-us-west1.cloud.zilliz.com/v2/vectordb/entities/insert"
     headers = {
-    "Authorization": "Bearer <API-BEARER_TOKEN>",
+    "Authorization": "Bearer 1831fe961113fd3aa8af9c99b8a7d2f3e87b34bc2ac4d0f5bc701b1b09049be2aaba097631a7c8943701cb39b7f625597eb16bae",
     "Accept": "application/json",
     "Content-Type": "application/json"
     }
