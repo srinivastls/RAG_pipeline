@@ -1,6 +1,12 @@
 import re
+import requests
 
-def finetune_prompt(query, model, tokenizer):
+
+  # Make sure the URL is correct
+
+
+
+def finetune_prompt(query,url):
     prompt_template = """
         You are an intelligent search assistant. Convert the following user query into a concise, well-formed search query that captures the core intent and essential information. Avoid unnecessary details. Your output must include the optimized query wrapped between <|startquery|> and <|endquery|>.
 
@@ -11,12 +17,14 @@ def finetune_prompt(query, model, tokenizer):
         Format:
         <|startquery|>optimized search query here<|endquery|>
     """
-
+    
     prompt = prompt_template.format(query=query)
-    inputs = tokenizer(prompt, return_tensors="pt")
-    outputs = model.generate(**inputs, max_new_tokens=50)
+    payload = {
+    "prompt": prompt
+    }
 
-    decoded = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+    decoded= requests.post(url, json=payload)
 
     # print("Decoded Output:", decoded)
     

@@ -19,48 +19,8 @@ def make_chunks(text, chunk_size=400, overlap=50):
             break
     return chunks
 
-# def embed_text(chunks, tokenizer, model):
-#     # Add 'query: ' prefix if embedding for queries (optional for docs)
-    
-#     chunks = ["query: " + text for text in chunks]
-
-#     # Tokenize input
-#     inputs = tokenizer(
-#         chunks,
-#         padding=True,
-#         truncation=True,
-#         return_tensors="pt",
-#         max_length=512
-#     )
-#     model.to("meta")
-#     # Move inputs to the same device as the model
-#     inputs = {k: v.to(model.device) for k, v in inputs.items()}
-#     # Get hidden states
-#     with torch.no_grad():
-#         outputs = model(**inputs, output_hidden_states=True)
-#         hidden_states = outputs.hidden_states[-1]
-
-#     # Attention-aware mean pooling
-#     attention_mask = inputs['attention_mask'].unsqueeze(-1).expand(hidden_states.size())
-#     masked_hidden = hidden_states * attention_mask
-#     summed = masked_hidden.sum(dim=1)
-#     counts = attention_mask.sum(dim=1)
-#     mean_pooled = summed / counts
-
-#     # Normalize embeddings (recommended for cosine similarity)
-#     normalized_embeddings = F.normalize(mean_pooled, p=2, dim=1)
-
-#     # print("Embedding shape:", len(normalized_embeddings), "x", len(normalized_embeddings[0]))
-
-#     return normalized_embeddings.cpu().numpy().tolist()
-
-
-
-def embed_text(chunks, tokenizer, model, device="cpu"):
-    # Ensure device is a torch device
-    device = torch.device(device)
-    
-    # Add 'query: ' prefix if embedding for queries
+def embed_text(chunks, tokenizer, model):
+    # Add 'query: ' prefix if embedding for queries (optional for docs)
     chunks = ["query: " + text for text in chunks]
 
     # Tokenize input
@@ -72,24 +32,23 @@ def embed_text(chunks, tokenizer, model, device="cpu"):
         max_length=512
     )
 
-    # Move inputs to the same device as model
-    inputs = {key: val.to(device) for key, val in inputs.items()}
-    model = model.to(device)
-
     with torch.no_grad():
         outputs = model(**inputs, output_hidden_states=True)
         hidden_states = outputs.hidden_states[-1]
 
+    # Attention-aware mean pooling
     attention_mask = inputs['attention_mask'].unsqueeze(-1).expand(hidden_states.size())
     masked_hidden = hidden_states * attention_mask
     summed = masked_hidden.sum(dim=1)
     counts = attention_mask.sum(dim=1)
     mean_pooled = summed / counts
 
+    # Normalize embeddings (recommended for cosine similarity)
     normalized_embeddings = F.normalize(mean_pooled, p=2, dim=1)
 
-    return normalized_embeddings.cpu().numpy().tolist()
+    # print("Embedding shape:", len(normalized_embeddings), "x", len(normalized_embeddings[0]))
 
+    return normalized_embeddings.cpu().numpy().tolist()
 
 def connect_to_database():
     if not connections.has_connection("default"):

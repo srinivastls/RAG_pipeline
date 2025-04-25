@@ -1,6 +1,7 @@
 import re
+import requests
 
-def generate_response(prompt, model, tokenizer):
+def generate_response(prompt,url):
     """
     Generate a response from the model based on the given prompt.
     
@@ -12,14 +13,11 @@ def generate_response(prompt, model, tokenizer):
     Returns:
         str: The generated response from the model.
     """
-    # Encode the prompt
-    inputs = tokenizer(prompt, return_tensors="pt")
-    
-    # Generate output
-    outputs = model.generate(**inputs, max_new_tokens=256, do_sample=True, temperature=0.7)
-    
-    # Decode the output
-    decoded = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+    payload = {
+    "prompt": prompt
+    }
+    decoded= requests.post(url, json=payload)
     
     match = re.search(r"(?i)Answer\s*:\s*(.*)", decoded, re.DOTALL)
     if match:

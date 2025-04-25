@@ -5,6 +5,11 @@ from database import connect_to_database, create_collection, upload_to_milvus, u
 from search import search_database, search_cloud_database
 from prompts import finetune_prompt, final_prompt
 from output import generate_response
+import requests
+
+
+url = "http://34.135.239.184:8000/generate"  # Make sure the URL is correct
+
 
 embedding_model_name = "BAAI/bge-large-en"
 
@@ -14,20 +19,6 @@ from transformers import AutoModel
 embedding_model = AutoModel.from_pretrained(embedding_model_name)
 
 embedding_model.eval()
-
-embedding_model.to("cpu")  # or "cuda"
-
-llm_model_name = "microsoft/Phi-3-mini-128k-instruct"
-
-llm_tokenizer = AutoTokenizer.from_pretrained(llm_model_name)
-llm_tokenizer.pad_token = llm_tokenizer.eos_token
-llm_tokenizer.padding_side = "right"
-
-llm_model = AutoModelForCausalLM.from_pretrained(llm_model_name)
-
-llm_model.eval()
-
-llm_model.to("cpu")  # or "cuda"
 
 #Streamlit Interface
 st.set_page_config(page_title="RAG Pipeline", layout="wide")
@@ -74,7 +65,7 @@ with tab2:
 with tab3:
     query = st.text_input("Enter your query:")
     if st.button("Ask Legal AI") and query:
-        finetuned_query = finetune_prompt(query, llm_model, llm_tokenizer)
+        finetuned_query = finetune_prompt(query, url)
         print(f"Finetuned Query: {finetuned_query}")
         # chunks = search_database(finetuned_query, embedding_tokenizer, embedding_model)
         chunks = search_cloud_database(query, embedding_tokenizer, embedding_model)
@@ -89,6 +80,6 @@ with tab3:
         
         prompt = final_prompt(query, context)
 
-        response = generate_response(prompt, llm_model, llm_tokenizer)
+        response = generate_response(prompt, url)
         st.markdown("### AI Response:")
         st.markdown(response)
