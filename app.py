@@ -53,8 +53,8 @@ with tab2:
             
             for i, hit in enumerate(results['data']):
                 st.markdown(f"**Result {i+1}**")
-                st.write(hit.entity.get("text"))
-                st.write("File Name:", hit.entity.get("filename"))
+                st.write(hit.get("text"))
+                st.write("File Name:", hit.get("filename"))
                 st.caption(f"Distance: {hit.distance:.4f}")
         
         except Exception as e:
