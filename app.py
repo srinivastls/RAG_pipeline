@@ -14,9 +14,7 @@ url = "http://34.135.239.184:8000/generate"  # Make sure the URL is correct
 embedding_model_name = "BAAI/bge-large-en"
 
 embedding_tokenizer = AutoTokenizer.from_pretrained(embedding_model_name)
-from transformers import AutoModel
-
-embedding_model = AutoModel.from_pretrained(embedding_model_name)
+embedding_model = AutoModelForCausalLM.from_pretrained(embedding_model_name)
 
 embedding_model.eval()
 
