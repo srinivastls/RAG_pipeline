@@ -49,14 +49,13 @@ with tab2:
     if st.button("Search") and query:
         try:
             results = search_cloud_database(query, embedding_tokenizer, embedding_model)
-            if results and len(results[0]) > 0:
-                for i, hit in enumerate(results[0]):
-                    st.markdown(f"**Result {i+1}**")
-                    st.write(hit.entity.get("text"))
-                    st.write("File Name:", hit.entity.get("filename"))
-                    st.caption(f"Distance: {hit.distance:.4f}")
-            else:
-                st.info("No results found.")
+            
+            for i, hit in enumerate(results[0]):
+                st.markdown(f"**Result {i+1}**")
+                st.write(hit.entity.get("text"))
+                st.write("File Name:", hit.entity.get("filename"))
+                st.caption(f"Distance: {hit.distance:.4f}")
+        
         except Exception as e:
             st.error(f"Search failed: {str(e)}")
 
