@@ -8,7 +8,7 @@ from output import generate_response
 import requests
 
 
-url = "http://34.135.239.184:8000/generate"  # Make sure the URL is correct
+url = "http://34.55.104.185:8000/generate"  # Make sure the URL is correct
 
 
 embedding_model_name = "BAAI/bge-large-en"
