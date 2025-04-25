@@ -27,11 +27,11 @@ def finetune_prompt(query,url):
     response= requests.post(url, json=payload)
     st.write("Decoded Response:", response)
     decoded=response.json()
-    st.write("Decoded Response:", decoded)
+    st.write("Decoded Response:", decoded['response'])
 
     
     
-    return re.findall(r"<\|startquery\|>(.*?)<\|endquery\|>", decoded, re.DOTALL)[-1]
+    return re.findall(r"<\|startquery\|>(.*?)<\|endquery\|>", decoded["response"], re.DOTALL)[-1]
 
 def final_prompt(query, context):
     prompt_tempplate = """
