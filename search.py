@@ -44,6 +44,7 @@ def search_cloud_database(query, tokenizer, model):
     }
 
     response = requests.post(url, data=payload, headers=headers)
+    st.write(response)
     results = response.json()
     
     return results

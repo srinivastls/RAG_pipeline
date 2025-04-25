@@ -25,9 +25,7 @@ def finetune_prompt(query,url):
     }
 
     response= requests.post(url, json=payload)
-    st.write("Decoded Response:", response)
     decoded=response.json()
-    st.write("Decoded Response:", decoded['response'])
 
     
     
