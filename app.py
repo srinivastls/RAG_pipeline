@@ -55,7 +55,7 @@ with tab2:
                 st.markdown(f"**Result {i+1}**")
                 st.write(hit.get("text"))
                 st.write("File Name:", hit.get("filename"))
-                st.caption(f"Distance: {hit.distance:.4f}")
+                st.caption(f"Distance: {hit.get('distance')}")
         
         except Exception as e:
             st.error(f"Search failed: {str(e)}")
