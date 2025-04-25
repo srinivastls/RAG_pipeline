@@ -23,8 +23,8 @@ def finetune_prompt(query,url):
     "prompt": prompt
     }
 
-
-    decoded= requests.post(url, json=payload)
+    response= requests.post(url, json=payload)
+    decoded=response.json()
 
     # print("Decoded Output:", decoded)
     
