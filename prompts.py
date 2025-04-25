@@ -1,5 +1,6 @@
 import re
 import requests
+import streamlit as st
 
 
   # Make sure the URL is correct
@@ -24,9 +25,11 @@ def finetune_prompt(query,url):
     }
 
     response= requests.post(url, json=payload)
-    decoded=response.json()
 
-    # print("Decoded Output:", decoded)
+    decoded=response.json()
+    st.write("Decoded Response:", decoded)
+
+    
     
     return re.findall(r"<\|startquery\|>(.*?)<\|endquery\|>", decoded, re.DOTALL)[-1]
 
