@@ -64,6 +64,7 @@ with tab3:
     query = st.text_input("Enter your query:")
     if st.button("Ask Legal AI") and query:
         finetuned_query = finetune_prompt(query, url)
+        st.write("Finetuned Query:", finetuned_query)
         # chunks = search_database(finetuned_query, embedding_tokenizer, embedding_model)
         chunks = search_cloud_database(query, embedding_tokenizer, embedding_model)
         st.write("Chunks:", chunks)
@@ -74,7 +75,7 @@ with tab3:
 
         for i, hit in enumerate(chunks['data']):
             context += hit['metadata'] + "\n" + hit['text'] + "\n"
-        # print("Context:", context)
+        print("Context:", context)
         
         prompt = final_prompt(query, context)
 
