@@ -67,6 +67,7 @@ with tab3:
         finetuned_query = finetune_prompt(query, url1)
         #st.write("Finetuned Query:", finetuned_query)
         # chunks = search_database(finetuned_query, embedding_tokenizer, embedding_model)
+        st.write("searching for chunks...")
         chunks = search_cloud_database(query, embedding_tokenizer, embedding_model)
         #st.write("Chunks:", chunks)
         # print(chunks)
@@ -79,7 +80,7 @@ with tab3:
         print("Context:", context)
         
         #prompt = final_prompt(query, context)
-
+        st.write("generating response...")
         response = generate_response(query,context, url)
         st.markdown("### AI Response:")
         st.markdown(response)
