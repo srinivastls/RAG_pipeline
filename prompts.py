@@ -3,8 +3,6 @@ import requests
 import streamlit as st
 
 
-  # Make sure the URL is correct
-
 
 
 def finetune_prompt(query,url):

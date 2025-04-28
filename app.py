@@ -9,6 +9,7 @@ import requests
 
 
 url = "http://34.72.217.0:8000/summarize"  # Make sure the URL is correct
+url1= "http://34.72.217.0:8000/generate"  # Make sure the URL is correct
 
 
 embedding_model_name = "BAAI/bge-large-en"
@@ -63,7 +64,7 @@ with tab2:
 with tab3:
     query = st.text_input("Enter your query:")
     if st.button("Ask Legal AI") and query:
-        finetuned_query = finetune_prompt(query, url)
+        finetuned_query = finetune_prompt(query, url1)
         st.write("Finetuned Query:", finetuned_query)
         # chunks = search_database(finetuned_query, embedding_tokenizer, embedding_model)
         chunks = search_cloud_database(query, embedding_tokenizer, embedding_model)
