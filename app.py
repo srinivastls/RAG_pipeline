@@ -8,7 +8,7 @@ from output import generate_response
 import requests
 
 
-url = "http://34.55.104.185:8000/generate"  # Make sure the URL is correct
+url = "http://34.72.217.0:8000/summarize"  # Make sure the URL is correct
 
 
 embedding_model_name = "BAAI/bge-large-en"
@@ -77,8 +77,8 @@ with tab3:
             context += hit['metadata'] + "\n" + hit['text'] + "\n"
         print("Context:", context)
         
-        prompt = final_prompt(query, context)
+        #prompt = final_prompt(query, context)
 
-        response = generate_response(prompt, url)
+        response = generate_response(query,context, url)
         st.markdown("### AI Response:")
         st.markdown(response)

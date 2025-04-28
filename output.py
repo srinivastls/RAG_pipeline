@@ -1,7 +1,7 @@
 import re
 import requests
 
-def generate_response(prompt,url):
+def generate_response(prompt,context,url):
     """
     Generate a response from the model based on the given prompt.
     
@@ -15,7 +15,8 @@ def generate_response(prompt,url):
     """
 
     payload = {
-    "prompt": prompt
+    "prompt": prompt,
+    "retrieved_docs":context
     }
     decoded= requests.post(url, json=payload)
     
