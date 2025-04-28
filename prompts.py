@@ -23,7 +23,18 @@ def finetune_prompt(query,url):
     }
 
     response= requests.post(url, json=payload)
-    decoded=response.json()
+    try:
+        decoded = response.json()  # Try to parse JSON
+    except ValueError:
+        decoded = response.text  # If it's not JSON, treat it as plain text
+    
+    # If it's a dictionary, extract using keys
+    if isinstance(decoded, dict):
+        # Extract the relevant information from the dictionary
+        return re.findall(r"<\|startquery\|>(.*?)<\|endquery\|>", decoded.get("key", ""))
+    else:
+        # If it's a string, use regex directly on the string
+        return re.findall(r"<\|startquery\|>(.*?)<\|endquery\|>", decoded)
 
     
     
