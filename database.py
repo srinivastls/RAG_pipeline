@@ -48,7 +48,7 @@ def embed_text(chunks, tokenizer, model):
 
     # print("Embedding shape:", len(normalized_embeddings), "x", len(normalized_embeddings[0]))
 
-    return normalized_embeddings.cpu().numpy().tolist()
+    return normalized_embeddings.numpy().tolist()
 
 def connect_to_database():
     if not connections.has_connection("default"):

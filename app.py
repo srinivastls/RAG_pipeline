@@ -14,8 +14,8 @@ url1= "http://34.72.217.0:8000/generate"  # Make sure the URL is correct
 
 embedding_model_name = "BAAI/bge-large-en"
 
-embedding_tokenizer = AutoTokenizer.from_pretrained(embedding_model_name)
-embedding_model = AutoModelForCausalLM.from_pretrained(embedding_model_name)
+embedding_tokenizer = AutoTokenizer.from_pretrained(embedding_model_name,trust_remote_code=True)
+embedding_model = AutoModelForCausalLM.from_pretrained(embedding_model_name,device_map="auto", trust_remote_code=True)
 
 embedding_model.eval()
 
