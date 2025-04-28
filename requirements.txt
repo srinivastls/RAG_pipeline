@@ -5,3 +5,4 @@ sentencepiece
 PYmuPDF
 requests
 pymilvus
+accelerate
