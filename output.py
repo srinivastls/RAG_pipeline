@@ -19,6 +19,12 @@ def generate_response(prompt,context,url):
     "retrieved_docs":context
     }
     decoded= requests.post(url, json=payload)
+
+    print(decoded)
+    try:
+        decoded = decoded.json()  # Try to parse JSON
+    except ValueError:
+        decoded = decoded.text  # If it's not JSON, treat it as plain text
     
     match = re.search(r"(?i)Answer\s*:\s*(.*)", decoded, re.DOTALL)
     if match:
