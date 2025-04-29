@@ -25,7 +25,7 @@ st.title("NyayaMitra:AI-Powered Legal Assistant")
 st.write("Welcome to NyayaMitra, your AI-powered legal assistant. Upload your legal documents, search through your database, or chat with our AI for legal advice.")
 
 # Tabs
-tab1, tab2, tab3,tab4 = st.tabs(["📤 Upload Document", "🔍 Search Database", "⚖️ Chat with Legal AI"])
+tab1, tab2, tab3,tab4 = st.tabs(["📤 Upload Document", "🔍 Search Database", "⚖️ Chat with Legal AI","Fake news Detector"])
 connect_to_database()
 
 # ---------- Tab 1: Upload ----------
