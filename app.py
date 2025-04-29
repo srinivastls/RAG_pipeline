@@ -93,10 +93,10 @@ with tab4:
 
     if st.button("Search") and query:
         try:
-            results = search_cloud_database(query, embedding_tokenizer, embedding_model)
+            result = search_cloud_database(query, embedding_tokenizer, embedding_model)
             
             
-            for i, hit in enumerate(results['data']):
+            for i, hit in enumerate(result['data']):
                 st.markdown(f"**Result {i+1}**")
                 st.write(hit.get("text"))
                 st.write("File Name:", hit.get("filename"))
