@@ -25,7 +25,7 @@ st.title("NyayaMitra:AI-Powered Legal Assistant")
 st.write("Welcome to NyayaMitra, your AI-powered legal assistant. Upload your legal documents, search through your database, or chat with our AI for legal advice.")
 
 # Tabs
-tab1, tab2, tab3 = st.tabs(["📤 Upload Document", "🔍 Search Database", "⚖️ Chat with Legal AI"])
+tab1, tab2, tab3,tab4 = st.tabs(["📤 Upload Document", "🔍 Search Database", "⚖️ Chat with Legal AI"])
 connect_to_database()
 
 # ---------- Tab 1: Upload ----------
@@ -85,3 +85,22 @@ with tab3:
         response = generate_response(query,context, url)
         st.markdown("### AI Response:")
         st.markdown(response)
+
+with tab4:
+    st.write("Check whether the given query is real news  or not(in the section level)")
+    query = st.text_input("Enter your search query:")
+    
+
+    if st.button("Search") and query:
+        try:
+            results = search_cloud_database(query, embedding_tokenizer, embedding_model)
+            
+            
+            for i, hit in enumerate(results['data']):
+                st.markdown(f"**Result {i+1}**")
+                st.write(hit.get("text"))
+                st.write("File Name:", hit.get("filename"))
+                st.caption(f"Distance: {hit.get('distance')}")
+        
+        except Exception as e:
+            st.error(f"Search failed: {str(e)}")
