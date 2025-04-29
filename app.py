@@ -20,8 +20,9 @@ embedding_model = AutoModelForCausalLM.from_pretrained(embedding_model_name,devi
 embedding_model.eval()
 
 #Streamlit Interface
-st.set_page_config(page_title="RAG Pipeline", layout="wide")
-st.title("RAG Pipeline: Upload & Search")
+st.set_page_config(page_title="NyayaMitra", layout="wide")
+st.title("NyayaMitra:AI-Powered Legal Assistant")
+st.write("Welcome to NyayaMitra, your AI-powered legal assistant. Upload your legal documents, search through your database, or chat with our AI for legal advice.")
 
 # Tabs
 tab1, tab2, tab3 = st.tabs(["📤 Upload Document", "🔍 Search Database", "⚖️ Chat with Legal AI"])
@@ -69,7 +70,7 @@ with tab3:
         # chunks = search_database(finetuned_query, embedding_tokenizer, embedding_model)
         st.write("searching for chunks...")
         chunks = search_cloud_database(query, embedding_tokenizer, embedding_model)
-        #st.write("Chunks:", chunks)
+        st.write("Chunks:", chunks)
         # print(chunks)
         context = ""
         # for i, hit in enumerate(chunks[0]):
