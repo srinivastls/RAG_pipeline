@@ -88,12 +88,12 @@ with tab3:
 
 with tab4:
     st.write("Check whether the given query is real news  or not(in the section level)")
-    query = st.text_input("Enter your search query:")
+    query1 = st.text_input("Enter your search query:")
     
 
     if st.button("Search") and query:
         try:
-            result = search_cloud_database(query, embedding_tokenizer, embedding_model)
+            result = search_cloud_database(query1, embedding_tokenizer, embedding_model)
             
             
             for i, hit in enumerate(result['data']):
