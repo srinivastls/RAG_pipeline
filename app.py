@@ -91,7 +91,7 @@ with tab4:
     query1 = st.text_input("Enter your search query:")
     
 
-    if st.button("Search") and query:
+    if st.button("fake news detect") and query:
         try:
             result = search_cloud_database(query1, embedding_tokenizer, embedding_model)
             
