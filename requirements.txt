@@ -6,3 +6,4 @@ PYmuPDF
 requests
 pymilvus
 accelerate
+plotly
