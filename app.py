@@ -1,166 +1,87 @@
 import streamlit as st
+from transformers import AutoTokenizer, AutoModelForCausalLM
+import torch.nn.functional as F
+from database import connect_to_database, create_collection, upload_to_milvus, upload_to_milvus_cloud
+from search import search_database, search_cloud_database
+from prompts import finetune_prompt, final_prompt
+from output import generate_response
 import requests
-import json
-import pandas as pd
-import plotly.express as px
-from PIL import Image
-import io
-import base64
 
-# API Configuration
-API_URL = "https://api.nyayamitra.org"
-API_TOKEN = None
 
-# Authentication
-def authenticate(username, password):
-    response = requests.post(
-        f"{API_URL}/token",
-        data={"username": username, "password": password}
-    )
-    if response.status_code == 200:
-        global API_TOKEN
-        API_TOKEN = response.json()["access_token"]
-        return True
-    return False
+url = "http://34.72.217.0:8000/summarize"  # Make sure the URL is correct
+url1= "http://34.72.217.0:8000/generate"  # Make sure the URL is correct
 
-# API Calls
-def call_api(endpoint, data):
-    headers = {"Authorization": f"Bearer {API_TOKEN}"}
-    response = requests.post(f"{API_URL}/{endpoint}", json=data, headers=headers)
-    return response.json()
 
-# Sidebar for navigation
-st.sidebar.title("NyayaMitra")
-page = st.sidebar.selectbox("Choose a feature", ["Login", "Chat", "Case Search", "Document Summarization", "News Verification", "Dashboard"])
+embedding_model_name = "BAAI/bge-large-en"
 
-# Login Page
-if page == "Login":
-    st.title("Welcome to NyayaMitra")
-    st.write("The AI-powered legal assistant for the Indian judiciary system")
-    
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-    
-    if st.button("Login"):
-        if authenticate(username, password):
-            st.success("Successfully logged in!")
-            st.session_state.logged_in = True
+embedding_tokenizer = AutoTokenizer.from_pretrained(embedding_model_name,trust_remote_code=True)
+embedding_model = AutoModelForCausalLM.from_pretrained(embedding_model_name,device_map="auto", trust_remote_code=True)
+
+embedding_model.eval()
+
+#Streamlit Interface
+st.set_page_config(page_title="NyayaMitra", layout="wide")
+st.title("NyayaMitra:AI-Powered Legal Assistant")
+st.write("Welcome to NyayaMitra, your AI-powered legal assistant. Upload your legal documents, search through your database, or chat with our AI for legal advice.")
+
+# Tabs
+tab1, tab2, tab3 = st.tabs(["📤 Upload Document", "🔍 Search Database", "⚖️ Chat with Legal AI"])
+connect_to_database()
+
+# ---------- Tab 1: Upload ----------
+with tab1:
+    uploaded_file = st.file_uploader("Choose a PDF file", type=["pdf"])
+
+    if st.button("Upload File"):
+        if uploaded_file:
+            collection = create_collection()
+            upload_to_milvus_cloud(uploaded_file, embedding_tokenizer, embedding_model)
+
+            st.success("File uploaded and stored in Milvus.")
+            st.write("File type:", uploaded_file.type)
+            st.write("File size (bytes):", uploaded_file.size)
         else:
-            st.error("Invalid credentials")
+            st.warning("Please select a file before uploading.")
 
-# Chat Page
-elif page == "Chat":
-    st.title("Legal Assistant Chat")
+# ---------- Tab 2: Search ----------
+with tab2:
+    query = st.text_input("Enter your search query:")
     
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
-    
-    # Display chat history
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.write(message["content"])
-    
-    # User input
-    user_input = st.chat_input("Ask a legal question...")
-    if user_input:
-        # Add user message to chat history
-        st.session_state.messages.append({"role": "user", "content": user_input})
-        with st.chat_message("user"):
-            st.write(user_input)
+
+    if st.button("Search") and query:
+        try:
+            results = search_cloud_database(query, embedding_tokenizer, embedding_model)
+            
+            
+            for i, hit in enumerate(results['data']):
+                st.markdown(f"**Result {i+1}**")
+                st.write(hit.get("text"))
+                st.write("File Name:", hit.get("filename"))
+                st.caption(f"Distance: {hit.get('distance')}")
         
-        # Generate assistant response
-        with st.chat_message("assistant"):
-            with st.spinner("Thinking..."):
-                response = call_api("api/chat", {"message": user_input})
-                st.write(response["response"])
+        except Exception as e:
+            st.error(f"Search failed: {str(e)}")
+
+with tab3:
+    query = st.text_input("Enter your query:")
+    if st.button("Ask Legal AI") and query:
+        finetuned_query = finetune_prompt(query, url1)
+        #st.write("Finetuned Query:", finetuned_query)
+        # chunks = search_database(finetuned_query, embedding_tokenizer, embedding_model)
+        st.write("searching for chunks...")
+        chunks = search_cloud_database(query, embedding_tokenizer, embedding_model)
+        st.write("Chunks:", chunks)
+        # print(chunks)
+        context = ""
+        # for i, hit in enumerate(chunks[0]):
+        #     context += hit.entity.get("text") + "\n"
+
+        for i, hit in enumerate(chunks['data']):
+            context += hit['text'] + "\n"
+        print("Context:", context)
         
-        # Add assistant response to chat history
-        st.session_state.messages.append({"role": "assistant", "content": response["response"]})
-
-# Case Search Page
-elif page == "Case Search":
-    st.title("Case Precedent Search")
-    
-    query = st.text_area("Describe the legal issue or cite a case")
-    max_results = st.slider("Maximum results", 1, 20, 5)
-    
-    if st.button("Search"):
-        with st.spinner("Searching for relevant cases..."):
-            results = call_api("api/search", {"query": query, "max_results": max_results})
-            
-            for i, result in enumerate(results["results"]):
-                with st.expander(f"{i+1}. {result['title']}"):
-                    st.write(f"**Court:** {result['court']}")
-                    st.write(f"**Date:** {result['date']}")
-                    st.write(f"**Relevance:** {result['relevance_score']:.2f}")
-                    st.write("**Summary:**")
-                    st.write(result['summary'])
-                    st.write("**Key Extract:**")
-                    st.write(result['extract'])
-                    st.write(f"[View Full Judgment]({result['url']})")
-
-# Document Summarization Page
-elif page == "Document Summarization":
-    st.title("Legal Document Summarization")
-    
-    uploaded_file = st.file_uploader("Upload a legal document", type=["pdf", "txt", "docx"])
-    summary_length = st.select_slider("Summary Length", options=["Short", "Medium", "Long"])
-    
-    if uploaded_file and st.button("Summarize"):
-        with st.spinner("Generating summary..."):
-            # Read and encode file
-            bytes_data = uploaded_file.getvalue()
-            encoded = base64.b64encode(bytes_data).decode()
-            
-            # Call API
-            summary_response = call_api("api/summarize", {
-                "document": encoded,
-                "length": summary_length.lower()
-            })
-            
-            # Display results
-            st.subheader("Document Summary")
-            st.write(summary_response["summary"])
-            
-            # Option to download
-            st.download_button(
-                "Download Summary",
-                summary_response["summary"],
-                file_name="document_summary.txt"
-            )
-
-# News Verification Page
-elif page == "News Verification":
-    st.title("Legal News Verification")
-    
-    news_text = st.text_area("Paste the legal news text to verify")
-    
-    if st.button("Verify"):
-        with st.spinner("Analyzing news..."):
-            verification = call_api("api/verify", {"news_text": news_text})
-            
-            # Display result with color coding
-            if verification["is_reliable"]:
-                st.success("This news appears to be reliable.")
-            else:
-                st.error("This news appears to be misleading or false.")
-            
-            # Display confidence and explanation
-            st.write(f"**Confidence:** {verification['confidence']:.2f}")
-            st.write("**Analysis:**")
-            st.write(verification["explanation"])
-
-# Dashboard Page
-elif page == "Dashboard":
-    st.title("NyayaMitra Analytics Dashboard")
-    
-    # Sample data (in a real app, this would come from the API)
-    query_data = pd.DataFrame({
-        "Category": ["Constitutional", "Criminal", "Civil", "Tax", "Other"],
-        "Count": [145, 210, 180, 75, 60]
-    })
-    
-    # Create charts
-    st.subheader("Query Categories")
-    fig1 = px.pie(query_data, values="Count", names="Category")
-    st.plotly_chart(fig1)
+        #prompt = final_prompt(query, context)
+        st.write("generating response...")
+        response = generate_response(query,context, url)
+        st.markdown("### AI Response:")
+        st.markdown(response)
