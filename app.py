@@ -8,10 +8,10 @@ from output import generate_response
 import requests
 
 
-url = "http://34.72.217.0:8000/summarize"  # Make sure the URL is correct
-url1= "http://34.72.217.0:8000/generate"  # Make sure the URL is correct
+url = "http://34.72.217.0:8000/summarize" 
+url1= "http://34.72.217.0:8000/generate"  
 fake_news_api_url = "http://34.72.217.0:8000/fake-news-detection" 
-
+summarization_api_url = "http://34.72.217.0:8000/summarize" 
 embedding_model_name = "BAAI/bge-large-en"
 
 embedding_tokenizer = AutoTokenizer.from_pretrained(embedding_model_name,trust_remote_code=True)
@@ -25,7 +25,7 @@ st.title("NyayaMitra:AI-Powered Legal Assistant")
 st.write("Welcome to NyayaMitra, your AI-powered legal assistant. Upload your legal documents, search through your database, or chat with our AI for legal advice.")
 
 # Tabs
-tab1, tab2, tab3, tab4 = st.tabs(["📤 Upload Document", "🔍 Search Database", "⚖️ Chat with Legal AI","📰 Fake News Detection"])
+tab1, tab2, tab3, tab4,tab5 = st.tabs(["📤 Upload Document", "🔍 Search Database", "⚖️ Chat with Legal AI","📰 Fake News Detection","Summarization"])
 connect_to_database()
 
 # ---------- Tab 1: Upload ----------
@@ -108,3 +108,27 @@ with tab4:
                 st.error(f"Error checking fake news: {e}")
         else:
             st.warning("Please enter some text to check.")
+
+
+with tab5:
+    st.subheader("Summarization")
+    text_to_summarize = st.text_area("Enter the text to summarize:")
+
+    if st.button("Summarize"):
+        if text_to_summarize:
+            payload = {'text': text_to_summarize}
+            
+            try:
+                response = requests.post(summarization_api_url, json=payload)
+                response_data = response.json()
+
+                if "summary" in response_data:
+                    st.markdown("### Summary:")
+                    st.write(response_data["summary"])
+                else:
+                    st.error("Error: Summary not found in the response.")
+            except requests.exceptions.RequestException as e:
+                st.error(f"Error summarizing text: {e}")
+        else:
+            st.warning("Please enter some text to summarize.")
+
