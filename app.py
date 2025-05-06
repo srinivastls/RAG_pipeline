@@ -10,7 +10,7 @@ import requests
 
 url = "http://34.72.217.0:8000/summarize"  # Make sure the URL is correct
 url1= "http://34.72.217.0:8000/generate"  # Make sure the URL is correct
-
+fake_news_api_url = "http://34.72.217.0:8000/fake-news-detection" 
 
 embedding_model_name = "BAAI/bge-large-en"
 
@@ -85,3 +85,29 @@ with tab3:
         response = generate_response(query,context, url)
         st.markdown("### AI Response:")
         st.markdown(response)
+
+with st.sidebar:
+    tab4 = st.selectbox("Select an action", ["📤 Upload Document", "🔍 Search Database", "⚖️ Chat with Legal AI", "📰 Fake News Detection"])
+
+if tab4 == "📰 Fake News Detection":
+    st.subheader("Fake News Detection")
+    news_text = st.text_area("Enter the news article or text to verify:")
+
+    if st.button("Check if Fake News"):
+        if news_text:
+            # Replace the URL with your fake news detection API endpoint
+            fake_news_api_url = fake_news_api_url
+            payload = {'text': news_text}
+            
+            try:
+                response = requests.post(fake_news_api_url, json=payload)
+                response_data = response.json()
+
+                if response_data.get("is_fake"):
+                    st.markdown("### ❌ This is likely Fake News.")
+                else:
+                    st.markdown("### ✅ This seems to be Real News.")
+            except requests.exceptions.RequestException as e:
+                st.error(f"Error checking fake news: {e}")
+        else:
+            st.warning("Please enter some text to check.")
