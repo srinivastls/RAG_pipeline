@@ -25,7 +25,7 @@ st.title("NyayaMitra:AI-Powered Legal Assistant")
 st.write("Welcome to NyayaMitra, your AI-powered legal assistant. Upload your legal documents, search through your database, or chat with our AI for legal advice.")
 
 # Tabs
-tab1, tab2, tab3 = st.tabs(["📤 Upload Document", "🔍 Search Database", "⚖️ Chat with Legal AI"])
+tab1, tab2, tab3, tab4 = st.tabs(["📤 Upload Document", "🔍 Search Database", "⚖️ Chat with Legal AI","📰 Fake News Detection"])
 connect_to_database()
 
 # ---------- Tab 1: Upload ----------
@@ -86,10 +86,7 @@ with tab3:
         st.markdown("### AI Response:")
         st.markdown(response)
 
-with st.sidebar:
-    tab4 = st.selectbox("Select an action", ["📤 Upload Document", "🔍 Search Database", "⚖️ Chat with Legal AI", "📰 Fake News Detection"])
-
-if tab4 == "📰 Fake News Detection":
+with tab4:
     st.subheader("Fake News Detection")
     news_text = st.text_area("Enter the news article or text to verify:")
 
