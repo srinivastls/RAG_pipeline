@@ -10,7 +10,7 @@ def extract_from_pdf(uploaded_file):
     doc = fitz.open(stream=uploaded_file.read(), filetype="pdf")
     return "".join(page.get_text() for page in doc)
 
-def make_chunks(text, chunk_size=400, overlap=50):
+def make_chunks(text, chunk_size=512, overlap=50):
     words = text.split()   
     chunks = []
     for i in range(0, len(words), chunk_size - overlap):
