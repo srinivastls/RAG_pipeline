@@ -33,7 +33,7 @@ def search_cloud_database(query, tokenizer, model):
     payload = {
         "collectionName": "RAG_legal",
         "data": [query_embedding[0]],
-        "limit": 10,
+        "limit": 5,
         "outputFields": ["primary_key", "text", "filename", 'metadata'],
         "searchParams": {
             "metric_type": "COSINE",
